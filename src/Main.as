@@ -133,6 +133,7 @@ public class Main extends Sprite
       Security.allowDomain(domain);
       ExternalInterface.addCallback("VGAPlayerAddMenuItem", externalAddMenuItem);
       ExternalInterface.addCallback("VGAPlayerConnect", externalConnect);
+      ExternalInterface.addCallback("SetVolume", SetVolume);
     }
   }
 
@@ -581,6 +582,15 @@ public class Main extends Sprite
     _url = url;
     connect();
   }
+
+  private function SetVolume(vol:Number): void
+  {
+    if (_stream != null) {
+      var transform:SoundTransform = 	new SoundTransform(vol);
+      _stream.soundTransform = transform;
+    }
+  }
+
 
   public function connect():void
   {
