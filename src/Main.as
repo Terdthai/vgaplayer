@@ -74,12 +74,14 @@ public class Main extends Sprite
     _video.smoothing = _config.smoothing;
     addChild(_video);
 
+    
     _overlay = new OverlayButton();
     _overlay.visible = false;
     _overlay.style = _config.style;
     _overlay.addEventListener(MouseEvent.CLICK, onOverlayClick);
-    addChild(_overlay);
+    //addChild(_overlay);
 
+  
     _control = new ControlBar(_config.fullscreen, _config.menu);
     _control.style = _config.style;
     _control.playButton.addEventListener(MouseEvent.CLICK, onPlayPauseClick);
@@ -94,7 +96,8 @@ public class Main extends Sprite
       _control.fsButton.toFullscreen = (stage.displayState == StageDisplayState.NORMAL);
       _control.fsButton.addEventListener(MouseEvent.CLICK, onFullscreenClick);
     }
-    addChild(_control);
+    //addChild(_control);
+    
 
     _debugdisp = new DebugDisplay();
     _debugdisp.visible = _config.debug;
@@ -133,7 +136,7 @@ public class Main extends Sprite
       Security.allowDomain(domain);
       ExternalInterface.addCallback("VGAPlayerAddMenuItem", externalAddMenuItem);
       ExternalInterface.addCallback("VGAPlayerConnect", externalConnect);
-      ExternalInterface.addCallback("SetVolume", SetVolume);
+      ExternalInterface.addCallback("setVolume", setVolume);
     }
   }
 
@@ -292,7 +295,7 @@ public class Main extends Sprite
       _stream.backBufferTime = _config.backBufferTime;
       _video.attachNetStream(_stream);
       _control.seekBar.isStatic = !_remoting;
-      updateVolume(_control.volumeSlider);
+      setVolume(_config.volume);
       startPlaying(_config.start);
       break;
 
@@ -431,10 +434,10 @@ public class Main extends Sprite
   private function updateVolume(slider:VolumeSlider):void
   {
     if (_stream != null) {
-      var transform:SoundTransform = 
-	new SoundTransform((slider.muted)? 0 : slider.value);
-      _stream.soundTransform = transform;
-    }
+        var transform:SoundTransform = 
+    new SoundTransform((slider.muted)? 0 : slider.value);
+        _stream.soundTransform = transform;
+      }
   }
 
   private function updateStatus(state:String, text:String=null):void
@@ -583,7 +586,7 @@ public class Main extends Sprite
     connect();
   }
 
-  private function SetVolume(vol:Number): void
+  public function setVolume(vol:Number): void
   {
     if (_stream != null) {
       var transform:SoundTransform = 	new SoundTransform(vol);
@@ -702,6 +705,7 @@ class Config extends Object
   public var volumeMutedColor:uint = 0xffff0000;
   public var imageUrl:String = null;
   public var pid:String = null;
+  public var volume:Number = 1.0;
 
   public function Config(obj:Object)
   {
@@ -793,6 +797,10 @@ class Config extends Object
       // pid
       if (obj.pid) {
 	pid = obj.pid;
+      }
+      // volume
+      if (obj.volume) {
+  volume = parseFloat(obj.volume);
       }
     }
   }
